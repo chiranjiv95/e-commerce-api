@@ -11,6 +11,9 @@ const morgan=require('morgan');
 // database
 const connectDB=require('./db/connectDB');
 
+// routers
+const authRouter=require('./routes/authRoutes');
+
 // middleware 
 const notFoundMiddleware=require('./middleware/notFound');
 const errorHandlerMiddleware=require('./middleware/errorHandler');
@@ -22,6 +25,8 @@ app.use(express.json());
 app.get('/', (req, res)=>{
     res.status(200).send(`E-Commerce API`);
 })
+
+app.use('/api/v1/auth', authRouter);
 
 app.use(notFoundMiddleware);
 app.use(errorHandlerMiddleware);
