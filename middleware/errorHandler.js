@@ -1,5 +1,5 @@
 const errorHandler=(req, res)=>{
-    res.status(500).send(`server error!`);
+    res.status(500).json({msg:'server error!'});
 }   
 
 module.exports=errorHandler;
