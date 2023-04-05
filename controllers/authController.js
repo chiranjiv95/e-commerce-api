@@ -1,4 +1,6 @@
 const User =require('../models/User');
+const {generateJWT, attachCookiesToResponse}=require('../utils/jwt');
+
 
 const register=async(req, res)=>{
 
@@ -14,15 +16,44 @@ const register=async(req, res)=>{
     const role=isFirstAccount===0?'admin':'user';
 
     const user=await User.create({email, name, password, role});
+   
+    // jwt token
+    const token=generateJWT(user);
+
+    // cookie
+    attachCookiesToResponse(token, res);
+   
     res.status(201).json({user});
 }
 
 const login=async(req, res)=>{
-    res.send(`login`)
+    const {email, password}=req.body;
+
+    if(!email || !password){
+        return res.status(400).json({msg:'please provide email and password'})
+    }
+   
+    const user=await User.findOne({email});
+
+    if(!user){
+        return res.status(401).json({msg:'Invalid credentials'})
+    }
+    const isPasswordCorrect=await user.comparePassword(password);
+    if(!isPasswordCorrect){
+        return res.status(401).json({msg:'Invalid credentials'})
+    }
+
+    const token=generateJWT(user);
+    attachCookiesToResponse(token, res);
+    res.status(200).json({user});
 }
 
 const logout=async(req, res)=>{
-    res.send(`logout`)
+    res.cookie('token', 'logout',{
+        httpOnly:true,
+        expires:new Date(Date.now())
+    });
+    res.status(200).json({msg:'user logged out!'})
 }
 
 module.exports={register, login, logout};

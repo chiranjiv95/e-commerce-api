@@ -7,6 +7,7 @@ const app=express();
 
 // rest of the packages
 const morgan=require('morgan');
+const cookieParser=require('cookie-parser');
 
 // database
 const connectDB=require('./db/connectDB');
@@ -21,8 +22,14 @@ const errorHandlerMiddleware=require('./middleware/errorHandler');
 
 app.use(morgan('tiny'));
 app.use(express.json());
+app.use(cookieParser(process.env.JWT_SECRET));
 
 app.get('/', (req, res)=>{
+    res.status(200).send(`E-Commerce API`);
+})
+
+app.get('/api/v1', (req, res)=>{
+    console.log(req.signedCookies);
     res.status(200).send(`E-Commerce API`);
 })
 
