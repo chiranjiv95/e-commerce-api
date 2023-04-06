@@ -14,6 +14,7 @@ const connectDB=require('./db/connectDB');
 
 // routers
 const authRouter=require('./routes/authRoutes');
+const userRouter=require('./routes/userRoutes');
 
 // middleware 
 const notFoundMiddleware=require('./middleware/notFound');
@@ -28,12 +29,14 @@ app.get('/', (req, res)=>{
     res.status(200).send(`E-Commerce API`);
 })
 
+// temp testing route
 app.get('/api/v1', (req, res)=>{
     console.log(req.signedCookies);
     res.status(200).send(`E-Commerce API`);
 })
 
 app.use('/api/v1/auth', authRouter);
+app.use('/api/v1/users', userRouter);
 
 app.use(notFoundMiddleware);
 app.use(errorHandlerMiddleware);
