@@ -61,6 +61,6 @@ const ProductShema=new mongoose.Schema({
         ref:'User',
         required:true,
     },
-}, {timeStamps:true});
+}, {timestamps:true});
 
 module.exports=mongoose.model('Product', ProductShema);
