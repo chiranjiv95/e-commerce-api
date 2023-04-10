@@ -3,7 +3,9 @@ const Product=require('../models/Product');
 const {checkPermissions}=require('../utils/checkPermissions');
 
 const getAllReviews=async(req, res)=>{
-    const reviews=await Review.find({});
+    const reviews=await Review.find({})
+        .populate({path:'product', select:'name price company'})
+        .populate({path:'user', select:'name'});
     res.status(200).json({reviews, count:reviews.length})
 }
 
@@ -45,8 +47,14 @@ const updateReview=async(req, res)=>{
     if(!review){
         return res.status(404).json({msg:'No review with the given id exists'})
     }
-    checkPermissions(req.user, review.user);
 
+    // this flag is temp sol
+    let flag=true;
+    flag=checkPermissions(req.user, review.user, res, flag);
+
+    if(!flag){
+        return res.status(401).json({msg:'Unauthorized'});
+    }
     review.title=title,
     review.comment=comment,
     review.rating=rating,
@@ -63,12 +71,19 @@ const deleteReview=async(req, res)=>{
     if(!review){
         return res.status(404).json({msg:'No review with the given id exists'})
     }
-    checkPermissions(req.user, review.user);
-    // await review.remove();
-    await Review.deleteOne({_id:review._id});
+    checkPermissions(req.user, review.user, res);
+    await review.deleteOne();
+    // await Review.deleteOne({_id:review._id});
     res.status(200).json({review, status:'Deleted Successfully'})
 }
 
+// get single product reviews
+const getSingleProductReviews=async(req, res)=>{
+    const {id:productID}=req.params;
+    const reviews=await Review.find({product:productID});
+    res.status(200).json({reviews, count:reviews.length});
+}
+
 module.exports={
-    getAllReviews, getSingleReview, createReview, updateReview, deleteReview
+    getAllReviews, getSingleReview, createReview, updateReview, deleteReview, getSingleProductReviews
 }

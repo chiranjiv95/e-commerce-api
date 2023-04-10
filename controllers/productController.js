@@ -8,7 +8,7 @@ const createProduct=async(req, res)=>{
 }
 
 const getAllProducts=async(req, res)=>{
-    const products=await Product.find({}).select(['name','description', 'price', 'image', 'company', 'category']);
+    const products=await Product.find({});
     if(!products){
         return res.status(404).json({msg:'List is empty'});
     }
@@ -17,7 +17,8 @@ const getAllProducts=async(req, res)=>{
 
 const getSingleProduct=async(req, res)=>{
     const {id:productID}=req.params;
-    const product=await Product.findOne({_id:productID}).select(['name','description', 'price', 'image', 'company', 'category']);
+    const product=await Product.findOne({_id:productID})
+        .select(['name','description', 'price', 'image', 'company', 'category']);
     if(!product){
         return res.status(404).json({msg:`product with id : ${productID} does not exist`});
     }
@@ -37,10 +38,12 @@ const updateProduct=async(req, res)=>{
 
 const deleteProduct=async(req, res)=>{
     const {id:productID}=req.params;
-    const product=await Product.findOneAndDelete({_id:productID});
+    const product=await Product.findOne({_id:productID});
     if(!product){
         return res.status(404).json({msg:`product with id : ${productID} does not exist`});        
     }
+    
+    await product.deleteOne();
     res.status(200).json({msg:`Success`})
 }
 

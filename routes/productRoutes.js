@@ -9,6 +9,9 @@ const {
     createProduct, getAllProducts, getSingleProduct, 
     updateProduct, uploadImage, deleteProduct } =require('../controllers/productController');
 
+// import from reviews controller
+const {getSingleProductReviews}=require('../controllers/reviewController');
+
 
 router.route('/')
       .post(authenticateUser, authorizePermissions, createProduct)
@@ -23,5 +26,7 @@ router.route('/:id')
       .patch(authenticateUser, authorizePermissions, updateProduct)
       .delete(authenticateUser, authorizePermissions, deleteProduct)
 
+
+router.route('/:id/reviews').get(getSingleProductReviews);
 
 module.exports=router;

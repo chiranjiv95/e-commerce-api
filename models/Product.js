@@ -1,6 +1,6 @@
 const mongoose=require('mongoose');
 
-const ProductShema=new mongoose.Schema({
+const ProductSchema=new mongoose.Schema({
     name:{
         type:String,
         required:[true, 'Please provide product name'],
@@ -56,6 +56,10 @@ const ProductShema=new mongoose.Schema({
         type:Number,
         default:0,
     },
+    numOfReviews:{
+        type:Number,
+        default:0,
+    },
     user:{
         type:mongoose.Types.ObjectId,
         ref:'User',
@@ -63,4 +67,9 @@ const ProductShema=new mongoose.Schema({
     },
 }, {timestamps:true});
 
-module.exports=mongoose.model('Product', ProductShema);
+
+ProductSchema.pre('deleteOne', {document:true},async function(next){
+    await this.model('Review').deleteMany({product:this._id});
+})
+
+module.exports=mongoose.model('Product', ProductSchema);
