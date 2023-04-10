@@ -1,8 +1,8 @@
 
-const checkPermissions=(LoggedInUser, resourceUserID,flag)=>{
-  if(LoggedInUser.role==='admin')return flag;
-  if(LoggedInUser.userID===resourceUserID.toString())return flag;
-  return flag=false;
+const checkPermissions=(LoggedInUser, resourceUserID,)=>{
+  if(LoggedInUser.role==='admin')return;
+  if(LoggedInUser.userID===resourceUserID.toString())return;
+  throw new Error;
 };
 
 module.exports={checkPermissions}

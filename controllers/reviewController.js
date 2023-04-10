@@ -48,13 +48,13 @@ const updateReview=async(req, res)=>{
         return res.status(404).json({msg:'No review with the given id exists'})
     }
 
-    // this flag is temp sol
-    let flag=true;
-    flag=checkPermissions(req.user, review.user, res, flag);
-
-    if(!flag){
+    // check permissions
+    try {
+        checkPermissions(req.user, review.user)
+    } catch (error) {
         return res.status(401).json({msg:'Unauthorized'});
     }
+
     review.title=title,
     review.comment=comment,
     review.rating=rating,
@@ -71,9 +71,15 @@ const deleteReview=async(req, res)=>{
     if(!review){
         return res.status(404).json({msg:'No review with the given id exists'})
     }
-    checkPermissions(req.user, review.user, res);
+    
+    // check permissions
+    try {
+        checkPermissions(req.user, review.user)
+    } catch (error) {
+        return res.status(401).json({msg:'Unauthorized'});
+    }
+
     await review.deleteOne();
-    // await Review.deleteOne({_id:review._id});
     res.status(200).json({review, status:'Deleted Successfully'})
 }
 

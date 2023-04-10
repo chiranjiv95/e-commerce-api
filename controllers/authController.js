@@ -4,23 +4,23 @@ const {generateJWT, attachCookiesToResponse}=require('../utils/jwt');
 
 const register=async(req, res)=>{
 
-    // check for email already exists
+    // check if email already exists
     const {email, name, password}=req.body;
     const emailAlreadyExists=await User.findOne({email});
     if(emailAlreadyExists){
         return res.status(400).json({msg:'Email already registered!'})
     }
 
-    // first registered user is an admin
+    // first registered user will be an admin
     const isFirstAccount=await User.countDocuments({});
     const role=isFirstAccount===0?'admin':'user';
 
     const user=await User.create({email, name, password, role});
    
-    // jwt token
+    // generate jwt token
     const token=generateJWT(user);
 
-    // cookie
+    // attach cookie to res
     attachCookiesToResponse(token, res);
    
     res.status(201).json({user});

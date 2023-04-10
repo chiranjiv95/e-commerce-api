@@ -17,13 +17,13 @@ const getSingleOrder=async(req, res)=>{
         return res.status(404).json({msg:'No order exists for the given ID'})
     }
 
-    // flag is temp sol
-    let flag=true;
-    flag=checkPermissions(req.user, order[0].user, flag);
-
-    if(!flag){
+    // check permissions
+    try {
+        checkPermissions(req.user, order[0].user);
+    } catch (error) {
         return res.status(401).json({msg:'Unauthorized'});
     }
+    
     res.status(200).json({order});
 }
 
@@ -36,15 +36,14 @@ const updateOrder=async(req, res)=>{
     }
 
     // check permissions
-    // flag is temp sol
-    let flag=true;
-    flag=checkPermissions(req.user, order.user, flag);
-    if(!flag){
+    try {
+        checkPermissions(req.user, order.user)
+    } catch (error) {
         return res.status(401).json({msg:'Unauthorized'});
     }
 
     order.paymentID=paymentID;
-    order.status='paid';
+    order.status='pending';
     await order.save();
     res.status(201).json({order, msg:'success'});
 }

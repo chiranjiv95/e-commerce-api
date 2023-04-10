@@ -2,7 +2,7 @@ const User=require('../models/User');
 const {generateJWT, attachCookiesToResponse}=require('../utils/jwt');
 const {checkPermissions}=require('../utils/checkPermissions');
 
-// GET ALL USERS
+
 const getAllUsers=async(req, res)=>{
         const users=await User.find({role:'user'}, {password:0});
         if(!users){
@@ -11,7 +11,6 @@ const getAllUsers=async(req, res)=>{
         res.status(200).json({users});
 }
 
-// GET SINGLE USER
 const getSingleUser=async(req, res)=>{
     const {id}=req.params;
 
@@ -20,17 +19,22 @@ const getSingleUser=async(req, res)=>{
         return res.status(404).json({msg:`No user with id : ${id} found!`})
     }
 
-    //  check for permission
-    checkPermissions(req.user, user._id, res); 
+    // check permissions
+    try {
+        checkPermissions(req.user, user._id); 
+    } catch (error) {
+        return res.status(401).json({msg:'Unauthorized'});
+    }
+
     res.status(200).json({user});
 }
 
-// SHOW CURRENT USER
+
 const showCurrentUser=async(req, res)=>{
     res.status(200).json(req.user);
 }
 
-// UPDATE USER
+
 const updateUser=async(req, res)=>{
     const {name, email}=req.body;
 
@@ -48,7 +52,7 @@ const updateUser=async(req, res)=>{
 
 }
 
-// UPDATE USER PASSWORD
+
 const updateUserPassword=async(req, res)=>{
     const {oldPassword, newPassword}=req.body;
     if(!oldPassword || !newPassword){

@@ -22,7 +22,6 @@ const orderRouter=require('./routes/orderRoutes')
 
 // middleware 
 const notFoundMiddleware=require('./middleware/notFound');
-const errorHandlerMiddleware=require('./middleware/errorHandler');
 
 
 app.use(morgan('tiny'));
@@ -31,10 +30,6 @@ app.use(cookieParser(process.env.JWT_SECRET));
 
 app.use(express.static('./public'));
 app.use(fileUpload());
-
-app.get('/', (req, res)=>{
-    res.status(200).send(`E-Commerce API`);
-})
 
 // temp testing route
 app.get('/api/v1', (req, res)=>{
@@ -49,7 +44,6 @@ app.use('/api/v1/reviews', reviewRouter);
 app.use('/api/v1/orders', orderRouter);
 
 app.use(notFoundMiddleware);
-app.use(errorHandlerMiddleware);
 
 
 const port=process.env.PORT || 3000
